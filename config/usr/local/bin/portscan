@@ -1,0 +1,30 @@
+#!/bin/bash
+
+if [ -z "$1" ]; then
+    echo "Usage: portscan <target> [start_port] [end_port]"
+    echo
+    echo "Example:"
+    echo "  portscan 192.168.1.1"
+    echo "  portscan 192.168.1.1 1 1024"
+    exit 1
+fi
+
+TARGET="$1"
+START="${2:-1}"
+END="${3:-1024}"
+
+echo "╔══════════════════════════════════════╗"
+echo "║          FILZAOS PORTSCAN            ║"
+echo "╠══════════════════════════════════════╣"
+echo "║ Target : $TARGET"
+echo "║ Range  : $START-$END"
+echo "╚══════════════════════════════════════╝"
+echo
+
+for PORT in $(seq "$START" "$END"); do
+    timeout 0.3 bash -c "echo >/dev/tcp/$TARGET/$PORT" 2>/dev/null &&
+        echo "[OPEN] $PORT"
+done
+
+echo
+echo "Scan complete."
