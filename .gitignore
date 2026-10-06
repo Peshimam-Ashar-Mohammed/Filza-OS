@@ -1,0 +1,13 @@
+# FilzaOS build artifacts
+build/
+workspace/
+*.iso
+*.squashfs
+
+# Temporary files
+*.tmp
+*.log
+
+# WSL/Linux
+*.swp
+*~
