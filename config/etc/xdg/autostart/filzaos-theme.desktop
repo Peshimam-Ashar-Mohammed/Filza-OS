@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=FilzaOS Theme
+Comment=Apply FilzaOS desktop theme
+Exec=/usr/local/bin/filzaos-theme-start
+NoDisplay=true
+X-GNOME-Autostart-enabled=true

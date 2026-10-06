@@ -1,0 +1,22 @@
+#!/bin/bash
+
+source /etc/filzaos-release
+
+HOST=$(hostname)
+KERNEL=$(uname -r)
+CPU=$(lscpu | grep "Model name" | sed 's/Model name:[[:space:]]*//')
+MEM=$(free -h | awk '/Mem:/ {print $3 " / " $2}')
+UPTIME=$(uptime -p)
+SHELL_NAME=$(basename "$SHELL")
+
+echo "╔══════════════════════════════════════╗"
+echo "║          FILZAOS SYSTEM              ║"
+echo "╠══════════════════════════════════════╣"
+printf "║ OS       : %-24s ║\n" "$FILZAOS_NAME $FILZAOS_VERSION"
+printf "║ Kernel   : %-24s ║\n" "$KERNEL"
+printf "║ Hostname : %-24s ║\n" "$HOST"
+printf "║ CPU      : %-24.24s ║\n" "$CPU"
+printf "║ Memory   : %-24s ║\n" "$MEM"
+printf "║ Uptime   : %-24s ║\n" "$UPTIME"
+printf "║ Shell    : %-24s ║\n" "$SHELL_NAME"
+echo "╚══════════════════════════════════════╝"

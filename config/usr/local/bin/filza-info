@@ -1,0 +1,11 @@
+#!/bin/bash
+source /etc/filzaos-release
+
+echo "╔════════════════════════════════╗"
+echo "║          FILZAOS               ║"
+echo "╠════════════════════════════════╣"
+echo "║ Version : $FILZAOS_VERSION     "
+echo "║ Codename: $FILZAOS_CODENAME    "
+echo "║ Base    : $FILZAOS_BASE        "
+echo "║ Arch    : $FILZAOS_ARCH        "
+echo "╚════════════════════════════════╝"
