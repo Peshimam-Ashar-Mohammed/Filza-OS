@@ -1,0 +1,26 @@
+#!/bin/bash
+
+echo "╔════════════════════════════════════════╗"
+echo "║           FILZAOS NETWORK              ║"
+echo "╠════════════════════════════════════════╣"
+
+INTERFACE=$(ip route | awk '/default/ {print $5; exit}')
+IP=$(ip -4 addr show "$INTERFACE" 2>/dev/null | awk '/inet / {print $2; exit}')
+GATEWAY=$(ip route | awk '/default/ {print $3; exit}')
+DNS=$(resolvectl dns 2>/dev/null | awk 'NR==1 {print $NF}')
+
+printf "║ Interface : %-25s ║\n" "${INTERFACE:-N/A}"
+printf "║ IP        : %-25s ║\n" "${IP:-N/A}"
+printf "║ Gateway   : %-25s ║\n" "${GATEWAY:-N/A}"
+printf "║ DNS       : %-25s ║\n" "${DNS:-N/A}"
+
+echo "╠════════════════════════════════════════╣"
+echo "║ Connectivity                           ║"
+
+if ping -c 1 -W 2 1.1.1.1 >/dev/null 2>&1; then
+    printf "║ Internet  : %-25s ║\n" "ONLINE"
+else
+    printf "║ Internet  : %-25s ║\n" "OFFLINE"
+fi
+
+echo "╚════════════════════════════════════════╝"
