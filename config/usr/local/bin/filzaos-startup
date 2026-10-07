@@ -1,0 +1,217 @@
+#!/usr/bin/env bash
+
+LOG="$HOME/.filzaos-startup.log"
+
+{
+    echo "========================================"
+    echo "          FILZAOS DESKTOP"
+    echo "$(date)"
+    echo "========================================"
+
+    export FILZAOS=1
+    export FILZAOS_VERSION=1.0.7
+
+    # ========================================================
+    # HOSTNAME
+    # ========================================================
+
+    sudo hostnamectl set-hostname filzaos 2>/dev/null || true
+    sudo hostname filzaos 2>/dev/null || true
+
+    # ========================================================
+    # WAIT FOR GNOME
+    # ========================================================
+
+    for i in {1..30}; do
+        if gsettings writable \
+            org.gnome.desktop.interface \
+            icon-theme >/dev/null 2>&1; then
+            break
+        fi
+        sleep 1
+    done
+
+    # ========================================================
+    # WALLPAPER
+    # ========================================================
+
+    WALLPAPER="file:///usr/share/backgrounds/filzaos/filzaos.png"
+
+    gsettings set \
+        org.gnome.desktop.background \
+        picture-uri \
+        "$WALLPAPER" \
+        2>/dev/null || true
+
+    gsettings set \
+        org.gnome.desktop.background \
+        picture-uri-dark \
+        "$WALLPAPER" \
+        2>/dev/null || true
+
+    gsettings set \
+        org.gnome.desktop.background \
+        picture-options \
+        "zoom" \
+        2>/dev/null || true
+
+    # ========================================================
+    # DARK MODE
+    # ========================================================
+
+    gsettings set \
+        org.gnome.desktop.interface \
+        color-scheme \
+        "prefer-dark" \
+        2>/dev/null || true
+
+    # ========================================================
+    # GTK THEME
+    # ========================================================
+
+    if [[ -d /usr/share/themes/FilzaOS ]]; then
+
+        gsettings set \
+            org.gnome.desktop.interface \
+            gtk-theme \
+            "FilzaOS" \
+            2>/dev/null || true
+
+        export GTK_THEME="FilzaOS"
+
+    fi
+
+    # ========================================================
+    # ICON THEME
+    # ========================================================
+
+    if [[ -f /usr/share/icons/FilzaOS/index.theme ]]; then
+
+        if command -v gtk-update-icon-cache >/dev/null 2>&1; then
+            sudo gtk-update-icon-cache \
+                -f \
+                -t \
+                /usr/share/icons/FilzaOS \
+                2>/dev/null || true
+        fi
+
+        gsettings set \
+            org.gnome.desktop.interface \
+            icon-theme \
+            "FilzaOS" \
+            2>/dev/null || true
+
+        export GTK_ICON_THEME="FilzaOS"
+
+    fi
+
+    # ========================================================
+    # FILZAOS TERMINAL PROMPT
+    # ========================================================
+
+    cat > "$HOME/.filzaos-prompt.sh" <<'PROMPT'
+if [[ $- == *i* ]]; then
+    PS1='\[\e[38;5;141m\]┌──[filzaos@filzaos]─[\w]\n\[\e[38;5;93m\]└─$ \[\e[0m\]'
+fi
+PROMPT
+
+    touch "$HOME/.bashrc"
+
+    if ! grep -q "filzaos-prompt.sh" "$HOME/.bashrc"; then
+        echo '. "$HOME/.filzaos-prompt.sh"' >> "$HOME/.bashrc"
+    fi
+
+    . "$HOME/.filzaos-prompt.sh" 2>/dev/null || true
+
+    # ========================================================
+    # REMOVE UBUNTU INSTALLER DESKTOP FILES
+    # ========================================================
+
+    for DIR in \
+        "$HOME/Desktop" \
+        "$HOME/desktop" \
+        "/home/ubuntu/Desktop" \
+        "/home/ubuntu/desktop" \
+        "/etc/skel/Desktop" \
+        "/etc/skel/desktop"
+    do
+
+        [[ -d "$DIR" ]] || continue
+
+        while IFS= read -r -d '' FILE; do
+
+            if grep -Eiq \
+                'Install Ubuntu|Ubuntu.*24\.04|ubiquity|ubuntu-desktop-installer|install-ubuntu' \
+                "$FILE" 2>/dev/null
+            then
+                rm -f "$FILE" 2>/dev/null || true
+            fi
+
+        done < <(
+            find "$DIR" \
+                -maxdepth 1 \
+                -type f \
+                -name '*.desktop' \
+                -print0 \
+                2>/dev/null
+        )
+
+    done
+
+    # ========================================================
+    # REMOVE INSTALLER LAUNCHERS FROM GNOME APPLICATION MENU
+    # ========================================================
+
+    for FILE in \
+        /usr/share/applications/ubiquity.desktop \
+        /usr/share/applications/ubuntu-desktop-installer.desktop \
+        /usr/share/applications/install-ubuntu.desktop
+    do
+        if [[ -f "$FILE" ]]; then
+            sudo rm -f "$FILE" 2>/dev/null || true
+        fi
+    done
+
+    # ========================================================
+    # TERMINAL TITLE
+    # ========================================================
+
+    printf '\033]0;FilzaOS Terminal\007' 2>/dev/null || true
+
+    # ========================================================
+    # REPORT
+    # ========================================================
+
+    echo
+    echo "FILZAOS STARTUP COMPLETE"
+    echo
+    echo "Hostname:"
+    hostname
+
+    echo
+    echo "GTK:"
+    gsettings get \
+        org.gnome.desktop.interface \
+        gtk-theme \
+        2>/dev/null || true
+
+    echo
+    echo "Icons:"
+    gsettings get \
+        org.gnome.desktop.interface \
+        icon-theme \
+        2>/dev/null || true
+
+    echo
+    echo "Wallpaper:"
+    gsettings get \
+        org.gnome.desktop.background \
+        picture-uri \
+        2>/dev/null || true
+
+    echo
+    echo "========================================"
+
+} >> "$LOG" 2>&1
+
+exit 0

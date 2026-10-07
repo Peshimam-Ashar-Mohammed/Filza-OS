@@ -1,44 +1,32 @@
-@define-color accent_color #8B5CF6;
-@define-color accent_hover #A78BFA;
-@define-color bg_color #0B0614;
-@define-color surface_color #160D24;
-@define-color text_color #F5F3FF;
+:root {
+    --filzaos-bg: #0B0614;
+    --filzaos-surface: #160B24;
+    --filzaos-purple: #8B5CF6;
+    --filzaos-light: #E9D5FF;
+}
 
 window,
 .background {
-    background-color: @bg_color;
-    color: @text_color;
+    background-color: #0B0614;
+    color: #E9D5FF;
+}
+
+headerbar {
+    background-color: #160B24;
+    color: #E9D5FF;
 }
 
 button {
-    background-color: @surface_color;
-    color: @text_color;
-    border: 1px solid #2D1B45;
-    border-radius: 8px;
+    background-color: #1B102B;
+    color: #E9D5FF;
 }
 
 button:hover {
-    background-color: #24143A;
-    border-color: @accent_color;
-}
-
-button:active,
-button:checked {
-    background-color: @accent_color;
-    color: white;
+    background-color: #6D28D9;
+    color: #FFFFFF;
 }
 
 entry {
-    background-color: @surface_color;
-    color: @text_color;
-    border-color: #35204F;
-}
-
-entry:focus {
-    border-color: @accent_color;
-}
-
-selection {
-    background-color: @accent_color;
-    color: white;
+    background-color: #10091A;
+    color: #E9D5FF;
 }

@@ -1,0 +1,28 @@
+#!/bin/bash
+
+sleep 3
+
+SCHEMA="org.gnome.Terminal.Legacy.ProfilesList"
+
+if ! gsettings list-keys "$SCHEMA" >/dev/null 2>&1; then
+    exit 0
+fi
+
+PROFILE=$(gsettings get "$SCHEMA" list 2>/dev/null |
+    grep -oE "'[a-f0-9-]{36}'" |
+    head -1 |
+    tr -d "'")
+
+[ -n "$PROFILE" ] || exit 0
+
+BASE="org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$PROFILE/"
+
+gsettings set "$BASE" use-theme-colors false
+gsettings set "$BASE" background-color '#0B0614'
+gsettings set "$BASE" foreground-color '#E9D5FF'
+gsettings set "$BASE" bold-color '#C084FC'
+gsettings set "$BASE" cursor-background-color '#C084FC'
+gsettings set "$BASE" cursor-foreground-color '#0B0614'
+
+gsettings set "$BASE" palette \
+"['#0B0614', '#FF5555', '#50FA7B', '#F1FA8C', '#BD93F9', '#FF79C6', '#8BE9FD', '#F8F8F2', '#44475A', '#FF6E6E', '#69FF94', '#FFFFA5', '#D6ACFF', '#FF92DF', '#A4FFFF', '#FFFFFF']"

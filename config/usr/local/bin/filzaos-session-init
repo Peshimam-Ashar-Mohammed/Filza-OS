@@ -1,0 +1,32 @@
+#!/bin/bash
+
+sleep 3
+
+# Apply FilzaOS GNOME settings directly to the live user.
+gsettings set org.gnome.desktop.interface gtk-theme 'FilzaOS' 2>/dev/null || true
+gsettings set org.gnome.desktop.interface icon-theme 'FilzaOS' 2>/dev/null || true
+gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark' 2>/dev/null || true
+gsettings set org.gnome.desktop.interface accent-color 'purple' 2>/dev/null || true
+
+gsettings set org.gnome.desktop.background picture-uri \
+    'file:///usr/share/backgrounds/filzaos/filzaos.png' 2>/dev/null || true
+
+gsettings set org.gnome.desktop.background picture-uri-dark \
+    'file:///usr/share/backgrounds/filzaos/filzaos.png' 2>/dev/null || true
+
+# Enable desktop icons.
+gnome-extensions enable ding@rastersoft.com 2>/dev/null || true
+
+# Make sure a Desktop directory exists.
+mkdir -p "$HOME/Desktop"
+
+# Visible FilzaOS file on the desktop.
+if [ ! -f "$HOME/Desktop/FilzaOS-README.txt" ]; then
+    cat > "$HOME/Desktop/FilzaOS-README.txt" <<'TEXT'
+FILZAOS
+
+Your system. Your way.
+
+FilzaOS Linux Remix
+TEXT
+fi

@@ -1,19 +1,12 @@
 [Icon Theme]
 Name=FilzaOS
 Comment=FilzaOS Purple Icon Theme
-Inherits=Adwaita
-Directories=scalable/places,scalable/mimetypes
+Inherits=Adwaita,hicolor
+Directories=scalable/places
 
 [scalable/places]
 Size=48
-Type=Scalable
 Context=Places
-MinSize=16
-MaxSize=512
-
-[scalable/mimetypes]
-Size=48
 Type=Scalable
-Context=MimeTypes
 MinSize=16
 MaxSize=512

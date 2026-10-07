@@ -1,0 +1,12 @@
+{
+    "parentMode": "user",
+    "hasNotifications": true,
+    "hasWorkspaces": true,
+    "isLocked": false,
+    "unlockDialog": "unlockDialog",
+    "panel": {
+        "left": [],
+        "center": [],
+        "right": []
+    }
+}

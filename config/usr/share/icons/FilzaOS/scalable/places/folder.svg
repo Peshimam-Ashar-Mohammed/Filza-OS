@@ -1,4 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <path fill="#8B5CF6" d="M5 14c0-3.3 2.7-6 6-6h16l6 7h20c3.3 0 6 2.7 6 6v31c0 3.3-2.7 6-6 6H11c-3.3 0-6-2.7-6-6V14z"/>
-  <path fill="#A78BFA" d="M5 22h54v30c0 3.3-2.7 6-6 6H11c-3.3 0-6-2.7-6-6V22z"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
+  <path fill="#8B5CF6"
+        d="M5 11c0-2.2 1.8-4 4-4h11l5 5h14c2.2 0 4 1.8 4 4v21c0 2.2-1.8 4-4 4H9c-2.2 0-4-1.8-4-4V11z"/>
+  <path fill="#A78BFA"
+        d="M5 17h38v20c0 2.2-1.8 4-4 4H9c-2.2 0-4-1.8-4-4V17z"/>
+  <path fill="#C4B5FD"
+        d="M9 11h11l4 4H9c-2.2 0-4 1.8-4 4v-4c0-2.2 1.8-4 4-4z"/>
 </svg>

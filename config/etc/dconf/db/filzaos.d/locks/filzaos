@@ -1,0 +1,9 @@
+/org/gnome/desktop/interface/gtk-theme
+/org/gnome/desktop/interface/icon-theme
+/org/gnome/desktop/interface/color-scheme
+/org/gnome/desktop/interface/accent-color
+/org/gnome/desktop/background/picture-uri
+/org/gnome/desktop/background/picture-uri-dark
+/org/gnome/desktop/background/picture-options
+/org/gnome/shell/enabled-extensions
+/org/gnome/shell/extensions/ding/icon-size

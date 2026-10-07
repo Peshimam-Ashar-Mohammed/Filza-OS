@@ -12,10 +12,8 @@ gsettings set org.gnome.desktop.background picture-options "zoom"
 
 gsettings set org.gnome.desktop.interface color-scheme "prefer-dark"
 
-gsettings set org.gnome.desktop.interface accent-color "purple" 2>/dev/null || true
-
 gsettings set org.gnome.desktop.interface icon-theme "FilzaOS"
 
-gsettings set org.gnome.desktop.interface gtk-theme "FilzaOS"
+gsettings set org.gnome.desktop.interface gtk-theme "FilzaOS" 2>/dev/null || true
 
-gsettings set org.gnome.desktop.interface cursor-theme "Adwaita"
+gsettings set org.gnome.desktop.interface accent-color "purple" 2>/dev/null || true

@@ -1,0 +1,12 @@
+[Unit]
+Description=FilzaOS Session Initialization
+PartOf=graphical-session.target
+After=graphical-session.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/filzaos-session-init
+RemainAfterExit=yes
+
+[Install]
+WantedBy=graphical-session.target

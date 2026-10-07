@@ -1,0 +1,10 @@
+Window.SetBackgroundTopColor(0.04, 0.01, 0.08);
+Window.SetBackgroundBottomColor(0.12, 0.02, 0.20);
+
+logo.image = Image.Text("FILZAOS", 1, 0.55, 0.95);
+
+logo.sprite = Sprite(logo.image);
+logo.sprite.SetPosition(
+    Window.GetX() + (Window.GetWidth() - logo.image.GetWidth()) / 2,
+    Window.GetY() + (Window.GetHeight() - logo.image.GetHeight()) / 2
+);

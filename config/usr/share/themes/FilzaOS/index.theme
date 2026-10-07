@@ -1,5 +1,10 @@
 [Desktop Entry]
 Type=X-GNOME-Metatheme
 Name=FilzaOS
-Comment=FilzaOS Dark Purple Theme
-Encoding=UTF-8
+Comment=FilzaOS Purple Dark Theme
+
+[X-GNOME-Metatheme]
+GtkTheme=FilzaOS
+IconTheme=FilzaOS
+CursorTheme=Adwaita
+ButtonLayout=appmenu:minimize,maximize,close

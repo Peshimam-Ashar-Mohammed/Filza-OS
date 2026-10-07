@@ -1,0 +1,33 @@
+#!/bin/bash
+
+PURPLE='\033[38;5;141m'
+PINK='\033[38;5;213m'
+RED='\033[38;5;196m'
+CYAN='\033[38;5;51m'
+YELLOW='\033[38;5;226m'
+RESET='\033[0m'
+
+clear
+
+HEART="
+       ██   ██
+     █████ █████
+    █████████████
+    █████████████
+     ███████████
+       ███████
+         ███
+          █
+"
+
+for COLOR in "$PURPLE" "$PINK" "$RED" "$CYAN" "$YELLOW"; do
+    clear
+    echo -e "${COLOR}${HEART}${RESET}"
+    sleep 0.18
+done
+
+clear
+echo -e "${PURPLE}${HEART}${RESET}"
+echo
+echo -e "${PINK}        I LOVE YOU PASTRY ❤️${RESET}"
+echo

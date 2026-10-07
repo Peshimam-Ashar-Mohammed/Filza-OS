@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=FilzaOS
+Comment=FilzaOS Desktop
+Exec=env GNOME_SHELL_SESSION_MODE=filzaos gnome-session --session=filzaos
+TryExec=gnome-session
+Type=Application
+DesktopNames=FilzaOS;GNOME
+X-GDM-SessionRegisters=true

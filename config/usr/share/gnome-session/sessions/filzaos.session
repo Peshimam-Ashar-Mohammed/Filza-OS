@@ -1,0 +1,4 @@
+[GNOME Session]
+Name=FilzaOS
+RequiredComponents=org.gnome.Shell;org.gnome.SettingsDaemon
+DesktopName=FilzaOS
