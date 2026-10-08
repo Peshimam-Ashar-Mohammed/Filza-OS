@@ -1,7 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=FilzaOS Terminal Theme
-Comment=Apply FilzaOS purple terminal theme
-Exec=/usr/local/bin/filzaos-terminal-theme
-NoDisplay=true
-X-GNOME-Autostart-enabled=true
