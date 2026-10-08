@@ -1,30 +1,96 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# ============================================================
+# FILZAOS NETWORK PORT SCANNER
+# ============================================================
 
-if [ -z "$1" ]; then
-    echo "Usage: portscan <target> [start_port] [end_port]"
+PURPLE='\033[38;5;141m'
+LAVENDER='\033[38;5;183m'
+GREEN='\033[38;5;82m'
+RESET='\033[0m'
+BOLD='\033[1m'
+
+if [[ -z "$1" ]]; then
+    echo "Usage:"
+    echo "  portscan <target> [start_port] [end_port]"
+    echo "  portscan --common <target>"
     echo
-    echo "Example:"
-    echo "  portscan 192.168.1.1"
-    echo "  portscan 192.168.1.1 1 1024"
+    echo "Examples:"
+    echo "  portscan localhost"
+    echo "  portscan 192.168.1.1 20 80"
+    echo "  portscan --common localhost"
     exit 1
 fi
 
-TARGET="$1"
-START="${2:-1}"
-END="${3:-1024}"
+get_service_name() {
+    local port="$1"
+    case "$port" in
+        21) echo "FTP" ;;
+        22) echo "SSH" ;;
+        23) echo "Telnet" ;;
+        25) echo "SMTP" ;;
+        53) echo "DNS" ;;
+        80) echo "HTTP" ;;
+        110) echo "POP3" ;;
+        139) echo "NetBIOS" ;;
+        143) echo "IMAP" ;;
+        443) echo "HTTPS" ;;
+        445) echo "SMB" ;;
+        993) echo "IMAPS" ;;
+        995) echo "POP3S" ;;
+        1433) echo "MSSQL" ;;
+        1521) echo "Oracle" ;;
+        3306) echo "MySQL" ;;
+        3389) echo "RDP" ;;
+        5432) echo "PostgreSQL" ;;
+        5900) echo "VNC" ;;
+        6379) echo "Redis" ;;
+        8080) echo "HTTP-Proxy" ;;
+        8443) echo "HTTPS-Alt" ;;
+        *) echo "Unknown" ;;
+    esac
+}
 
-echo "╔══════════════════════════════════════╗"
-echo "║          FILZAOS PORTSCAN            ║"
-echo "╠══════════════════════════════════════╣"
-echo "║ Target : $TARGET"
-echo "║ Range  : $START-$END"
-echo "╚══════════════════════════════════════╝"
 echo
+echo -e "${PURPLE}${BOLD}╔══════════════════════════════════════════════════════════════╗${RESET}"
+echo -e "${PURPLE}${BOLD}║                 FILZAOS NETWORK SCANNER                      ║${RESET}"
+echo -e "${PURPLE}${BOLD}╚══════════════════════════════════════════════════════════════╝${RESET}"
 
-for PORT in $(seq "$START" "$END"); do
-    timeout 0.3 bash -c "echo >/dev/tcp/$TARGET/$PORT" 2>/dev/null &&
-        echo "[OPEN] $PORT"
-done
+if [[ "$1" == "--common" ]]; then
+    TARGET="$2"
+    if [[ -z "$TARGET" ]]; then
+        echo "Error: Target required after --common"
+        exit 1
+    fi
+    echo -e "Target:  ${LAVENDER}$TARGET${RESET}"
+    echo -e "Mode:    ${LAVENDER}Common Ports (22 TCP services)${RESET}"
+    echo -e "${PURPLE}──────────────────────────────────────────────────────────────${RESET}"
+    printf "  %-8s %-12s %-15s\n" "PORT" "STATE" "SERVICE"
+    echo -e "${PURPLE}──────────────────────────────────────────────────────────────${RESET}"
 
-echo
-echo "Scan complete."
+    COMMON_PORTS=(21 22 23 25 53 80 110 139 143 443 445 993 995 1433 1521 3306 3389 5432 5900 6379 8080 8443)
+    for PORT in "${COMMON_PORTS[@]}"; do
+        if timeout 0.4 bash -c "echo >/dev/tcp/$TARGET/$PORT" 2>/dev/null; then
+            SVC=$(get_service_name "$PORT")
+            printf "  ${LAVENDER}%-8s${RESET} ${GREEN}%-12s${RESET} %-15s\n" "$PORT" "OPEN" "$SVC"
+        fi
+    done
+else
+    TARGET="$1"
+    START="${2:-1}"
+    END="${3:-1024}"
+    echo -e "Target:  ${LAVENDER}$TARGET${RESET}"
+    echo -e "Range:   ${LAVENDER}$START - $END${RESET}"
+    echo -e "${PURPLE}──────────────────────────────────────────────────────────────${RESET}"
+    printf "  %-8s %-12s %-15s\n" "PORT" "STATE" "SERVICE"
+    echo -e "${PURPLE}──────────────────────────────────────────────────────────────${RESET}"
+
+    for PORT in $(seq "$START" "$END"); do
+        if timeout 0.3 bash -c "echo >/dev/tcp/$TARGET/$PORT" 2>/dev/null; then
+            SVC=$(get_service_name "$PORT")
+            printf "  ${LAVENDER}%-8s${RESET} ${GREEN}%-12s${RESET} %-15s\n" "$PORT" "OPEN" "$SVC"
+        fi
+    done
+fi
+
+echo -e "${PURPLE}──────────────────────────────────────────────────────────────${RESET}"
+echo -e "Scan complete.\n"

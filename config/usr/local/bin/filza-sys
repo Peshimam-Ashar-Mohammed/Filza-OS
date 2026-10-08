@@ -1,22 +1,54 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# ============================================================
+# FILZAOS SYSTEM UTILITY
+# ============================================================
 
-source /etc/filzaos-release
+PURPLE='\033[38;5;141m'
+LAVENDER='\033[38;5;183m'
+RESET='\033[0m'
+BOLD='\033[1m'
 
-HOST=$(hostname)
-KERNEL=$(uname -r)
-CPU=$(lscpu | grep "Model name" | sed 's/Model name:[[:space:]]*//')
-MEM=$(free -h | awk '/Mem:/ {print $3 " / " $2}')
-UPTIME=$(uptime -p)
-SHELL_NAME=$(basename "$SHELL")
+CMD="${1:-info}"
 
-echo "╔══════════════════════════════════════╗"
-echo "║          FILZAOS SYSTEM              ║"
-echo "╠══════════════════════════════════════╣"
-printf "║ OS       : %-24s ║\n" "$FILZAOS_NAME $FILZAOS_VERSION"
-printf "║ Kernel   : %-24s ║\n" "$KERNEL"
-printf "║ Hostname : %-24s ║\n" "$HOST"
-printf "║ CPU      : %-24.24s ║\n" "$CPU"
-printf "║ Memory   : %-24s ║\n" "$MEM"
-printf "║ Uptime   : %-24s ║\n" "$UPTIME"
-printf "║ Shell    : %-24s ║\n" "$SHELL_NAME"
-echo "╚══════════════════════════════════════╝"
+case "$CMD" in
+    info)
+        /usr/local/bin/filza-info
+        ;;
+    cpu)
+        echo -e "\n${PURPLE}${BOLD}── CPU Information ─────────────────────────${RESET}"
+        lscpu 2>/dev/null | grep -E 'Model name|Architecture|CPU\(s\):|Thread\(s\) per core|Core\(s\) per socket|CPU max MHz|CPU min MHz' || cat /proc/cpuinfo | grep 'model name' | head -1
+        echo -e "${PURPLE}── CPU Load Averages ───────────────────────${RESET}"
+        uptime
+        echo
+        ;;
+    memory|mem)
+        echo -e "\n${PURPLE}${BOLD}── Memory Statistics ───────────────────────${RESET}"
+        free -h
+        echo -e "\n${PURPLE}── Swap Details ────────────────────────────${RESET}"
+        swapon --show 2>/dev/null || cat /proc/swaps 2>/dev/null
+        echo
+        ;;
+    disk)
+        echo -e "\n${PURPLE}${BOLD}── Disk Usage & Filesystems ────────────────${RESET}"
+        df -h -x tmpfs -x devtmpfs -x squashfs
+        echo -e "\n${PURPLE}── Block Devices ───────────────────────────${RESET}"
+        lsblk 2>/dev/null || true
+        echo
+        ;;
+    processes|ps|proc)
+        echo -e "\n${PURPLE}${BOLD}── Top 10 CPU Consuming Processes ──────────${RESET}"
+        ps aux --sort=-%cpu | head -n 11
+        echo -e "\n${PURPLE}${BOLD}── Top 10 Memory Consuming Processes ───────${RESET}"
+        ps aux --sort=-%mem | head -n 11
+        echo
+        ;;
+    services|svc)
+        echo -e "\n${PURPLE}${BOLD}── Running Systemd Services ────────────────${RESET}"
+        systemctl list-units --type=service --state=running | head -n 25
+        echo
+        ;;
+    *)
+        echo "Usage: filza-sys [info|cpu|memory|disk|processes|services]"
+        exit 1
+        ;;
+esac

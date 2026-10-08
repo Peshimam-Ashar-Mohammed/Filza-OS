@@ -5,7 +5,7 @@
 # ============================================================
 
 export FILZAOS=1
-export FILZAOS_VERSION="1.0.8"
+export FILZAOS_VERSION="1.0.9"
 
 if [[ $- == *i* ]]; then
     PS1='\[\e[38;5;141m\]┌──[filzaos@filzaos]─[\w]\n\[\e[38;5;93m\]└─$ \[\e[0m\]'

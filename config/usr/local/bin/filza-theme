@@ -1,0 +1,121 @@
+#!/usr/bin/env bash
+# ============================================================
+# FILZAOS THEME SWITCHER ENGINE
+# ============================================================
+
+PURPLE='\033[38;5;141m'
+LAVENDER='\033[38;5;183m'
+GREEN='\033[38;5;82m'
+RESET='\033[0m'
+BOLD='\033[1m'
+
+THEME="${1:-list}"
+
+list_themes() {
+    echo -e "\n${PURPLE}${BOLD}── Available FilzaOS Themes ────────────────────────────${RESET}"
+    echo -e "  ${LAVENDER}purple${RESET}        : FilzaOS Signature Purple Dark Mode (Default)"
+    echo -e "  ${LAVENDER}midnight${RESET}      : Midnight Deep-Space Ultra-Dark Purple Mode"
+    echo -e "  ${LAVENDER}cyber-violet${RESET}  : Cyber-Violet Futuristic Orbital Space Mode"
+    echo -e "  ${LAVENDER}light${RESET}         : Lilac High-Key Clean Light Mode"
+    echo -e "  ${LAVENDER}neon${RESET}          : Neon Cyberpunk Cityscape Purple-Cyan Mode"
+    echo -e "  ${LAVENDER}classic${RESET}       : Original Classic Heritage FilzaOS Mode"
+    echo -e "\nUsage: ${PURPLE}filza-theme <theme_name>${RESET}\n"
+}
+
+set_theme() {
+    local t="$1"
+    local wp=""
+    local color_scheme="prefer-dark"
+    local term_bg="#0B0614"
+    local term_fg="#E9D5FF"
+    local term_bold="#C084FC"
+
+    case "$t" in
+        purple|default)
+            wp="filzaos-purple.png"
+            color_scheme="prefer-dark"
+            term_bg="#0B0614"
+            term_fg="#E9D5FF"
+            term_bold="#C084FC"
+            ;;
+        midnight)
+            wp="filzaos-midnight.png"
+            color_scheme="prefer-dark"
+            term_bg="#05020A"
+            term_fg="#D8B4FE"
+            term_bold="#A855F7"
+            ;;
+        cyber-violet|cyber)
+            wp="filzaos-cyber-violet.png"
+            color_scheme="prefer-dark"
+            term_bg="#0D071E"
+            term_fg="#F3E8FF"
+            term_bold="#D946EF"
+            ;;
+        light)
+            wp="filzaos-light.png"
+            color_scheme="prefer-light"
+            term_bg="#2E1065"
+            term_fg="#FAF5FF"
+            term_bold="#C084FC"
+            ;;
+        neon|cyberpunk)
+            wp="filzaos-neon.png"
+            color_scheme="prefer-dark"
+            term_bg="#0F051D"
+            term_fg="#E0E7FF"
+            term_bold="#22D3EE"
+            ;;
+        classic)
+            wp="filzaos-classic.png"
+            color_scheme="prefer-dark"
+            term_bg="#0B0614"
+            term_fg="#E9D5FF"
+            term_bold="#C084FC"
+            ;;
+        *)
+            echo "Error: Unknown theme '$t'."
+            list_themes
+            exit 1
+            ;;
+    esac
+
+    # 1. Apply Wallpaper
+    /usr/local/bin/filza-wallpaper "$wp" >/dev/null 2>&1 || true
+
+    # 2. GTK & Icon Theme
+    gsettings set org.gnome.desktop.interface gtk-theme "FilzaOS" 2>/dev/null || true
+    gsettings set org.gnome.desktop.interface icon-theme "FilzaOS" 2>/dev/null || true
+    gsettings set org.gnome.desktop.interface color-scheme "$color_scheme" 2>/dev/null || true
+
+    # 3. Terminal Palette
+    SCHEMA="org.gnome.Terminal.ProfilesList"
+    if gsettings list-keys "$SCHEMA" >/dev/null 2>&1; then
+        PROFILE=$(gsettings get "$SCHEMA" default 2>/dev/null | tr -d "'")
+        if [[ -z "$PROFILE" || "$PROFILE" == "none" ]]; then
+            PROFILE=$(gsettings get "$SCHEMA" list 2>/dev/null | grep -oE "'[a-f0-9-]{36}'" | head -1 | tr -d "'")
+        fi
+        if [[ -n "$PROFILE" ]]; then
+            BASE="org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$PROFILE/"
+            gsettings set "$BASE" use-theme-colors false 2>/dev/null || true
+            gsettings set "$BASE" background-color "$term_bg" 2>/dev/null || true
+            gsettings set "$BASE" foreground-color "$term_fg" 2>/dev/null || true
+            gsettings set "$BASE" bold-color "$term_bold" 2>/dev/null || true
+        fi
+    fi
+
+    # Save to user state file
+    mkdir -p "$HOME/.config/filzaos"
+    echo "$t" > "$HOME/.config/filzaos/current-theme"
+
+    echo -e "[${GREEN}✓${RESET}] FilzaOS Theme applied: ${PURPLE}${BOLD}$t${RESET} (Appearance: $color_scheme)"
+}
+
+case "$THEME" in
+    list|--list|-l)
+        list_themes
+        ;;
+    *)
+        set_theme "$THEME"
+        ;;
+esac

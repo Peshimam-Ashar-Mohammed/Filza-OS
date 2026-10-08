@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+# ============================================================
+# FILZAOS COMMAND HELP & FEATURE GUIDE
+# ============================================================
+
+PURPLE='\033[38;5;141m'
+LAVENDER='\033[38;5;183m'
+VIOLET='\033[38;5;93m'
+BRIGHT='\033[38;5;219m'
+YELLOW='\033[38;5;226m'
+RESET='\033[0m'
+BOLD='\033[1m'
+
+echo
+echo -e "${PURPLE}${BOLD}========================================================================${RESET}"
+echo -e "                   ${BRIGHT}${BOLD}FILZAOS 1.0.9 COMMAND & FEATURE GUIDE${RESET}"
+echo -e "${PURPLE}${BOLD}========================================================================${RESET}"
+echo -e "  FilzaOS is a custom Linux Remix engineered with high-performance"
+echo -e "  purple aesthetic branding, custom system utilities, and full security."
+echo
+
+echo -e "${VIOLET}${BOLD}── SYSTEM UTILITIES ────────────────────────────────────────────────────${RESET}"
+printf "  ${PURPLE}%-18s${RESET} : %s\n" "filza" "Master command center & banner overview"
+printf "  ${PURPLE}%-18s${RESET} : %s\n" "filza-info" "Comprehensive distribution & hardware summary"
+printf "  ${PURPLE}%-18s${RESET} : %s\n" "filza-sys" "System diagnostics [info|cpu|memory|disk|processes|services]"
+printf "  ${PURPLE}%-18s${RESET} : %s\n" "filza-doctor" "Automated 14-point system integrity & health verification"
+printf "  ${PURPLE}%-18s${RESET} : %s\n" "filza-fetch" "Lightweight FilzaOS ASCII system fetch tool"
+echo
+
+echo -e "${VIOLET}${BOLD}── THEME & WALLPAPER ENGINES ───────────────────────────────────────────${RESET}"
+printf "  ${PURPLE}%-18s${RESET} : %s\n" "filza-theme" "Switch complete desktop theme & color palette"
+printf "  ${PURPLE}%-18s${RESET} : %s\n" "" "Usage: filza-theme [purple|midnight|cyber-violet|light|neon|classic]"
+printf "  ${PURPLE}%-18s${RESET} : %s\n" "filza-wallpaper" "Instant persistent wallpaper switcher"
+printf "  ${PURPLE}%-18s${RESET} : %s\n" "" "Usage: filza-wallpaper [list|purple|midnight|cyber-violet|light|neon|classic|random]"
+echo
+
+echo -e "${VIOLET}${BOLD}── NETWORK TOOLS ───────────────────────────────────────────────────────${RESET}"
+printf "  ${PURPLE}%-18s${RESET} : %s\n" "filza-net" "Network diagnostic utility [info|ip|ping|route|ports]"
+printf "  ${PURPLE}%-18s${RESET} : %s\n" "portscan" "FilzaOS high-speed TCP socket port scanner"
+printf "  ${PURPLE}%-18s${RESET} : %s\n" "" "Usage: portscan <target> [start] [end] OR portscan --common <target>"
+echo
+
+echo -e "${VIOLET}${BOLD}── UTILITIES & SECRETS ─────────────────────────────────────────────────${RESET}"
+printf "  ${PURPLE}%-18s${RESET} : %s\n" "filza-help" "Display this complete guide to FilzaOS commands"
+printf "  ${PURPLE}%-18s${RESET} : %s\n" "jan" "FilzaOS developer easter egg animation"
+echo
+
+echo -e "${VIOLET}${BOLD}── STANDARD LINUX COMMANDS ─────────────────────────────────────────────${RESET}"
+printf "  ${LAVENDER}%-18s${RESET} : %s\n" "ls, cd, pwd" "Navigate directories and list contents"
+printf "  ${LAVENDER}%-18s${RESET} : %s\n" "mkdir, touch, rm" "Create and manage files and directories"
+printf "  ${LAVENDER}%-18s${RESET} : %s\n" "grep, cat, less" "Inspect and search text within files"
+printf "  ${LAVENDER}%-18s${RESET} : %s\n" "systemctl, journalctl" "Manage system services and view system journals"
+printf "  ${LAVENDER}%-18s${RESET} : %s\n" "sudo apt update" "Ubuntu standard package management (preserved)"
+echo
+echo -e "${PURPLE}${BOLD}========================================================================${RESET}"
+echo -e "  For more details, visit: ${LAVENDER}https://github.com/Peshimam-Ashar-Mohammed/Filza-OS${RESET}"
+echo

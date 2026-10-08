@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="248" height="87" viewBox="0 0 248 87">
+  <defs>
+    <linearGradient id="pg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#C084FC"/>
+      <stop offset="100%" stop-color="#8B5CF6"/>
+    </linearGradient>
+  </defs>
+  <text x="124" y="44" font-family="Ubuntu, sans-serif" font-size="32" font-weight="bold" fill="#E9D5FF" text-anchor="middle" letter-spacing="2">FILZAOS</text>
+  <text x="124" y="66" font-family="Ubuntu, sans-serif" font-size="12" font-weight="600" fill="url(#pg)" text-anchor="middle" letter-spacing="4">LINUX REMIX</text>
+</svg>

@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+# ============================================================
+# FILZAOS FETCH UTILITY
+# ============================================================
+
+PURPLE='\033[38;5;141m'
+LAVENDER='\033[38;5;183m'
+VIOLET='\033[38;5;93m'
+BRIGHT='\033[38;5;219m'
+WHITE='\033[1;37m'
+RESET='\033[0m'
+BOLD='\033[1m'
+
+KERNEL=$(uname -r)
+ARCH=$(uname -m)
+HOST=$(hostname)
+USER_NAME=${USER:-$(whoami)}
+SHELL_NAME=$(basename "${SHELL:-bash}")
+UPTIME=$(uptime -p 2>/dev/null | sed 's/^up //' || uptime | awk '{print $3}')
+
+CPU=$(grep -m1 'model name' /proc/cpuinfo 2>/dev/null | cut -d: -f2 | sed 's/^[ \t]*//' || echo "Unknown CPU")
+GPU=$(lspci 2>/dev/null | grep -i 'vga\|3d\|display' | cut -d: -f3 | sed 's/^[ \t]*//' | head -1 || echo "Virtual / Standard VGA")
+
+MEM_TOTAL=$(free -h 2>/dev/null | awk '/^Mem:/ {print $2}')
+MEM_USED=$(free -h 2>/dev/null | awk '/^Mem:/ {print $3}')
+
+RES=$(xdpyinfo 2>/dev/null | awk '/dimensions:/ {print $2}' || echo "1920x1080 (auto)")
+THEME=$(gsettings get org.gnome.desktop.interface gtk-theme 2>/dev/null | tr -d "'" || echo "FilzaOS")
+ICONS=$(gsettings get org.gnome.desktop.interface icon-theme 2>/dev/null | tr -d "'" || echo "FilzaOS")
+
+echo
+cat << EOF
+${PURPLE}      ███████╗██╗██╗     ${RESET}  ${BRIGHT}${BOLD}${USER_NAME}${RESET}${LAVENDER}@${RESET}${PURPLE}${BOLD}${HOST}${RESET}
+${PURPLE}      ██╔════╝██║██║     ${RESET}  ${VIOLET}-------------------------${RESET}
+${PURPLE}      █████╗  ██║██║     ${RESET}  ${LAVENDER}OS:${RESET} FilzaOS 1.0.9 (Noble)
+${PURPLE}      ██╔══╝  ██║██║     ${RESET}  ${LAVENDER}Kernel:${RESET} ${KERNEL} (${ARCH})
+${PURPLE}      ██║     ██║███████╗${RESET}  ${LAVENDER}Uptime:${RESET} ${UPTIME}
+${PURPLE}      ╚═╝     ╚═╝╚══════╝${RESET}  ${LAVENDER}Shell:${RESET} ${SHELL_NAME}
+${VIOLET}      ███████╗ █████╗    ${RESET}  ${LAVENDER}Resolution:${RESET} ${RES}
+${VIOLET}      ╚════██║██╔══██╗   ${RESET}  ${LAVENDER}Desktop:${RESET} GNOME 46
+${VIOLET}          ██╔╝███████║   ${RESET}  ${LAVENDER}Theme:${RESET} ${THEME}
+${VIOLET}         ██╔╝ ██╔══██║   ${RESET}  ${LAVENDER}Icons:${RESET} ${ICONS}
+${VIOLET}        ██╔╝  ██║  ██║   ${RESET}  ${LAVENDER}CPU:${RESET} ${CPU:0:28}
+${VIOLET}        ╚═╝   ╚═╝  ╚═╝   ${RESET}  ${LAVENDER}GPU:${RESET} ${GPU:0:28}
+${BRIGHT}      FILZAOS LINUX      ${RESET}  ${LAVENDER}Memory:${RESET} ${MEM_USED} / ${MEM_TOTAL}
+
+       ${PURPLE}███${LAVENDER}███${VIOLET}███${BRIGHT}███${WHITE}███${RESET}
+EOF
+echo

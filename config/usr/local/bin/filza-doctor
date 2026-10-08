@@ -1,0 +1,94 @@
+#!/usr/bin/env bash
+# ============================================================
+# FILZAOS SYSTEM DOCTOR & INTEGRITY CHECK
+# ============================================================
+
+PURPLE='\033[38;5;141m'
+LAVENDER='\033[38;5;183m'
+GREEN='\033[38;5;82m'
+RED='\033[38;5;196m'
+YELLOW='\033[38;5;226m'
+RESET='\033[0m'
+BOLD='\033[1m'
+
+echo
+echo -e "${PURPLE}${BOLD}============================================================${RESET}"
+echo -e "               ${PURPLE}${BOLD}FILZAOS DOCTOR HEALTH CHECK${RESET}"
+echo -e "${PURPLE}${BOLD}============================================================${RESET}"
+echo
+
+ERRORS=0
+
+check_item() {
+    local name="$1"
+    local condition="$2"
+    local detail="$3"
+
+    if eval "$condition"; then
+        printf "  [${GREEN}✓${RESET}] %-32s : ${GREEN}OK${RESET}\n" "$name"
+    else
+        printf "  [${RED}!${RESET}] %-32s : ${RED}FAILED${RESET} (${YELLOW}%s${RESET})\n" "$name" "$detail"
+        ERRORS=$((ERRORS + 1))
+    fi
+}
+
+# 1. Release identity
+check_item "Release Identity" "[[ -f /etc/filzaos-release ]] && grep -q 'FILZAOS_VERSION=\"1.0.9\"' /etc/filzaos-release" "Missing or incorrect /etc/filzaos-release"
+
+# 2. Hostname
+check_item "Hostname" "[[ \"\$(hostname)\" == \"filzaos\" ]]" "Hostname is $(hostname), expected filzaos"
+
+# 3. GNOME
+check_item "GNOME Environment" "which gnome-shell >/dev/null 2>&1" "GNOME shell binary missing"
+
+# 4. GTK Theme
+check_item "GTK Theme Installed" "[[ -d /usr/share/themes/FilzaOS ]]" "Missing /usr/share/themes/FilzaOS"
+
+# 5. Icon Theme
+check_item "Icon Theme Installed" "[[ -d /usr/share/icons/FilzaOS ]] && [[ -f /usr/share/icons/FilzaOS/index.theme ]]" "Missing /usr/share/icons/FilzaOS"
+
+# 6. Purple Folder Icons
+check_item "Purple Folders (inode-directory)" "[[ -f /usr/share/icons/FilzaOS/scalable/places/folder.svg ]] && [[ -f /usr/share/icons/FilzaOS/scalable/mimetypes/inode-directory.svg ]]" "Missing folder.svg or inode-directory.svg"
+
+# 7. Sidebar Symbolic Icons
+check_item "Sidebar Symbolic Icons" "[[ -f /usr/share/icons/FilzaOS/scalable/places/folder-symbolic.svg ]] && [[ -f /usr/share/icons/FilzaOS/scalable/places/user-home-symbolic.svg ]]" "Missing symbolic folder icons"
+
+# 8. Wallpaper
+check_item "Wallpaper Library" "[[ -f /usr/share/backgrounds/filzaos/filzaos.png ]] && [[ -f /usr/share/backgrounds/filzaos/filzaos-purple.png ]]" "Missing FilzaOS wallpapers"
+
+# 9. Terminal Environment
+check_item "Terminal Configuration" "grep -q 'filzaos@filzaos' /etc/profile.d/filzaos-terminal.sh 2>/dev/null || grep -q 'filzaos@filzaos' /etc/bash.bashrc.d/filzaos.sh 2>/dev/null" "FilzaOS PS1 prompt not detected in system configs"
+
+# 10. Network Interface
+check_item "Network Interface" "ip link show up | grep -v 'lo:' | grep -q 'state UP\\|state UNKNOWN' || ip -br addr | grep -v 'lo' | grep -q 'UP'" "No active network interface found"
+
+# 11. DNS Resolution
+check_item "DNS Resolution" "getent hosts google.com >/dev/null 2>&1 || getent hosts github.com >/dev/null 2>&1 || grep -q 'nameserver' /etc/resolv.conf 2>/dev/null" "DNS nameserver not responding"
+
+# 12. Disk Space
+ROOT_AVAIL=$(df -m / 2>/dev/null | awk 'NR==2 {print $4}')
+check_item "Root Filesystem Space" "[[ ${ROOT_AVAIL:-0} -gt 500 ]]" "Low disk space (<500MB available)"
+
+# 13. RAM Capacity
+MEM_AVAIL=$(free -m 2>/dev/null | awk '/^Mem:/ {print $2}')
+check_item "System Memory (RAM)" "[[ ${MEM_AVAIL:-0} -gt 1000 ]]" "Low RAM (<1GB detected)"
+
+# 14. Required FilzaOS Commands
+CMDS_OK=true
+for c in filza filza-info filza-sys filza-net filza-theme filza-wallpaper filza-fetch filza-help filza-doctor portscan jan filzaos-startup; do
+    if ! which "$c" >/dev/null 2>&1 && ! [[ -x "/usr/local/bin/$c" ]]; then
+        CMDS_OK=false
+        break
+    fi
+done
+check_item "FilzaOS Command Suite" "$CMDS_OK" "One or more FilzaOS utility scripts missing from /usr/local/bin"
+
+echo
+echo -e "${PURPLE}${BOLD}============================================================${RESET}"
+if [[ $ERRORS -eq 0 ]]; then
+    echo -e "  ${GREEN}${BOLD}ALL CHECKS PASSED (14/14). FilzaOS system is healthy!${RESET}"
+else
+    echo -e "  ${YELLOW}${BOLD}$ERRORS check(s) flagged warnings or failures.${RESET}"
+fi
+echo -e "${PURPLE}${BOLD}============================================================${RESET}"
+echo

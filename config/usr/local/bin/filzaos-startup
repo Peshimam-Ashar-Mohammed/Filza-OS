@@ -12,7 +12,7 @@ LOG="$HOME/.filzaos-startup.log"
     echo "========================================"
 
     export FILZAOS=1
-    export FILZAOS_VERSION="1.0.8"
+    export FILZAOS_VERSION="1.0.9"
 
     # Set hostname safely
     sudo hostnamectl set-hostname filzaos 2>/dev/null || true
@@ -26,49 +26,35 @@ LOG="$HOME/.filzaos-startup.log"
         sleep 0.5
     done
 
-    # 1. Wallpaper
-    WALLPAPER="file:///usr/share/backgrounds/filzaos/filzaos.png"
-    gsettings set org.gnome.desktop.background picture-uri "$WALLPAPER" 2>/dev/null || true
-    gsettings set org.gnome.desktop.background picture-uri-dark "$WALLPAPER" 2>/dev/null || true
-    gsettings set org.gnome.desktop.background picture-options "zoom" 2>/dev/null || true
-    gsettings set org.gnome.desktop.background primary-color "#0B0614" 2>/dev/null || true
-    gsettings set org.gnome.desktop.background secondary-color "#0B0614" 2>/dev/null || true
-
-    # 2. Appearance & Themes
-    gsettings set org.gnome.desktop.interface color-scheme "prefer-dark" 2>/dev/null || true
-    gsettings set org.gnome.desktop.interface gtk-theme "FilzaOS" 2>/dev/null || true
-    gsettings set org.gnome.desktop.interface icon-theme "FilzaOS" 2>/dev/null || true
-    gsettings set org.gnome.desktop.interface cursor-theme "Yaru" 2>/dev/null || true
-
-    # 3. Dock & Favorites (clean pinned apps: Files, Terminal, Firefox)
-    gsettings set org.gnome.shell favorite-apps "['org.gnome.Nautilus.desktop', 'org.gnome.Terminal.desktop', 'firefox_firefox.desktop']" 2>/dev/null || true
-
-    # 4. Terminal profile purple styling
-    SCHEMA="org.gnome.Terminal.ProfilesList"
-    if gsettings list-keys "$SCHEMA" >/dev/null 2>&1; then
-        PROFILE=$(gsettings get "$SCHEMA" default 2>/dev/null | tr -d "'")
-        if [[ -z "$PROFILE" || "$PROFILE" == "none" ]]; then
-            PROFILE=$(gsettings get "$SCHEMA" list 2>/dev/null | grep -oE "'[a-f0-9-]{36}'" | head -1 | tr -d "'")
-        fi
-        if [[ -n "$PROFILE" ]]; then
-            BASE="org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$PROFILE/"
-            gsettings set "$BASE" use-theme-colors false 2>/dev/null || true
-            gsettings set "$BASE" background-color '#0B0614' 2>/dev/null || true
-            gsettings set "$BASE" foreground-color '#E9D5FF' 2>/dev/null || true
-            gsettings set "$BASE" bold-color '#C084FC' 2>/dev/null || true
-            gsettings set "$BASE" cursor-background-color '#C084FC' 2>/dev/null || true
-            gsettings set "$BASE" cursor-foreground-color '#0B0614' 2>/dev/null || true
-            gsettings set "$BASE" palette "['#0B0614', '#FF5555', '#50FA7B', '#F1FA8C', '#BD93F9', '#FF79C6', '#8BE9FD', '#F8F8F2', '#44475A', '#FF6E6E', '#69FF94', '#FFFFA5', '#D6ACFF', '#FF92DF', '#A4FFFF', '#FFFFFF']" 2>/dev/null || true
-        fi
+    # 1. Check for saved theme preference or apply default purple theme
+    SAVED_THEME="purple"
+    if [[ -f "$HOME/.config/filzaos/current-theme" ]]; then
+        SAVED_THEME=$(cat "$HOME/.config/filzaos/current-theme")
     fi
 
-    # 5. Terminal prompt in ~/.bashrc
+    if [[ -x /usr/local/bin/filza-theme ]]; then
+        /usr/local/bin/filza-theme "$SAVED_THEME" 2>/dev/null || true
+    else
+        # Direct fallback
+        WALLPAPER="file:///usr/share/backgrounds/filzaos/filzaos.png"
+        gsettings set org.gnome.desktop.background picture-uri "$WALLPAPER" 2>/dev/null || true
+        gsettings set org.gnome.desktop.background picture-uri-dark "$WALLPAPER" 2>/dev/null || true
+        gsettings set org.gnome.desktop.background picture-options "zoom" 2>/dev/null || true
+        gsettings set org.gnome.desktop.interface color-scheme "prefer-dark" 2>/dev/null || true
+        gsettings set org.gnome.desktop.interface gtk-theme "FilzaOS" 2>/dev/null || true
+        gsettings set org.gnome.desktop.interface icon-theme "FilzaOS" 2>/dev/null || true
+    fi
+
+    # 2. Dock & Favorites (clean pinned apps: Files, Terminal, Firefox)
+    gsettings set org.gnome.shell favorite-apps "['org.gnome.Nautilus.desktop', 'org.gnome.Terminal.desktop', 'firefox_firefox.desktop']" 2>/dev/null || true
+
+    # 3. Terminal prompt in ~/.bashrc
     PROMPT_LINE='PS1="\[\e[38;5;141m\]┌──[filzaos@filzaos]─[\w]\n\[\e[38;5;93m\]└─$ \[\e[0m\]"'
     if [[ -f "$HOME/.bashrc" ]] && ! grep -q "filzaos@filzaos" "$HOME/.bashrc"; then
         echo "$PROMPT_LINE" >> "$HOME/.bashrc"
     fi
 
-    # 6. Remove installer shortcuts from desktop
+    # 4. Remove installer shortcuts from desktop
     for DIR in "$HOME/Desktop" "$HOME/desktop" "/home/ubuntu/Desktop" "/home/ubuntu/desktop"; do
         if [[ -d "$DIR" ]]; then
             find "$DIR" -maxdepth 1 -type f -name '*.desktop' | while read -r f; do
@@ -79,7 +65,7 @@ LOG="$HOME/.filzaos-startup.log"
         fi
     done
 
-    # 7. Remove installer desktop files from applications directories
+    # 5. Remove installer desktop files from applications directories
     sudo rm -f \
         /usr/share/applications/ubiquity.desktop \
         /usr/share/applications/ubuntu-desktop-installer.desktop \

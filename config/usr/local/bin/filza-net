@@ -1,26 +1,49 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# ============================================================
+# FILZAOS NETWORK UTILITY
+# ============================================================
 
-echo "╔════════════════════════════════════════╗"
-echo "║           FILZAOS NETWORK              ║"
-echo "╠════════════════════════════════════════╣"
+PURPLE='\033[38;5;141m'
+LAVENDER='\033[38;5;183m'
+RESET='\033[0m'
+BOLD='\033[1m'
 
-INTERFACE=$(ip route | awk '/default/ {print $5; exit}')
-IP=$(ip -4 addr show "$INTERFACE" 2>/dev/null | awk '/inet / {print $2; exit}')
-GATEWAY=$(ip route | awk '/default/ {print $3; exit}')
-DNS=$(resolvectl dns 2>/dev/null | awk 'NR==1 {print $NF}')
+CMD="${1:-info}"
 
-printf "║ Interface : %-25s ║\n" "${INTERFACE:-N/A}"
-printf "║ IP        : %-25s ║\n" "${IP:-N/A}"
-printf "║ Gateway   : %-25s ║\n" "${GATEWAY:-N/A}"
-printf "║ DNS       : %-25s ║\n" "${DNS:-N/A}"
-
-echo "╠════════════════════════════════════════╣"
-echo "║ Connectivity                           ║"
-
-if ping -c 1 -W 2 1.1.1.1 >/dev/null 2>&1; then
-    printf "║ Internet  : %-25s ║\n" "ONLINE"
-else
-    printf "║ Internet  : %-25s ║\n" "OFFLINE"
-fi
-
-echo "╚════════════════════════════════════════╝"
+case "$CMD" in
+    info)
+        echo -e "\n${PURPLE}${BOLD}── FilzaOS Network Overview ────────────────${RESET}"
+        printf "  ${LAVENDER}%-15s${RESET} : %s\n" "Hostname" "$(hostname)"
+        printf "  ${LAVENDER}%-15s${RESET} : %s\n" "Local IP(s)" "$(hostname -I 2>/dev/null || ip -br addr | awk '{print $3}')"
+        printf "  ${LAVENDER}%-15s${RESET} : %s\n" "Default Gateway" "$(ip route show default 2>/dev/null | awk '{print $3}' || echo 'None')"
+        printf "  ${LAVENDER}%-15s${RESET} : %s\n" "DNS Servers" "$(grep 'nameserver' /etc/resolv.conf 2>/dev/null | awk '{print $2}' | tr '\n' ' ')"
+        echo -e "\n${PURPLE}── Active Network Interfaces ───────────────${RESET}"
+        ip -br addr show 2>/dev/null || ifconfig -s 2>/dev/null
+        echo
+        ;;
+    ip)
+        echo -e "\n${PURPLE}${BOLD}── IP Address Information ──────────────────${RESET}"
+        ip addr show
+        echo
+        ;;
+    ping)
+        TARGET="${2:-8.8.8.8}"
+        echo -e "\n${PURPLE}${BOLD}── Pinging $TARGET (4 packets) ─────────────${RESET}"
+        ping -c 4 "$TARGET"
+        echo
+        ;;
+    route)
+        echo -e "\n${PURPLE}${BOLD}── IP Routing Table ────────────────────────${RESET}"
+        ip route show
+        echo
+        ;;
+    ports)
+        echo -e "\n${PURPLE}${BOLD}── Listening Ports & Sockets ───────────────${RESET}"
+        ss -tuln 2>/dev/null || netstat -tuln 2>/dev/null
+        echo
+        ;;
+    *)
+        echo "Usage: filza-net [info|ip|ping <host>|route|ports]"
+        exit 1
+        ;;
+esac

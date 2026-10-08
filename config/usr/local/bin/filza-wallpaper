@@ -1,0 +1,95 @@
+#!/usr/bin/env bash
+# ============================================================
+# FILZAOS WALLPAPER ENGINE
+# ============================================================
+
+PURPLE='\033[38;5;141m'
+LAVENDER='\033[38;5;183m'
+GREEN='\033[38;5;82m'
+RESET='\033[0m'
+BOLD='\033[1m'
+
+BG_DIR="/usr/share/backgrounds/filzaos"
+CMD="${1:-list}"
+
+list_wallpapers() {
+    echo -e "\n${PURPLE}${BOLD}── Available FilzaOS Wallpapers ────────────────────────${RESET}"
+    echo -e "  ${LAVENDER}purple${RESET}        : Classic FilzaOS Purple (Default)"
+    echo -e "  ${LAVENDER}midnight${RESET}      : Dark Deep-Space Minimalist Purple"
+    echo -e "  ${LAVENDER}cyber-violet${RESET}  : Purple Orbital Sci-Fi Landscape"
+    echo -e "  ${LAVENDER}light${RESET}         : Futuristic Lilac Light Landscape"
+    echo -e "  ${LAVENDER}neon${RESET}          : Neon Cyberpunk Cityscape"
+    echo -e "  ${LAVENDER}classic${RESET}       : Original FilzaOS Heritage Wallpaper"
+    echo -e "  ${LAVENDER}random${RESET}        : Select a random wallpaper from the collection"
+    echo -e "\nUsage: ${PURPLE}filza-wallpaper <name>${RESET}\n"
+}
+
+set_wallpaper() {
+    local target="$1"
+    local file=""
+
+    case "$target" in
+        purple|default)
+            file="$BG_DIR/filzaos-purple.png"
+            [[ -f "$file" ]] || file="$BG_DIR/filzaos.png"
+            ;;
+        midnight)
+            file="$BG_DIR/filzaos-midnight.png"
+            ;;
+        cyber-violet|cyber|violet)
+            file="$BG_DIR/filzaos-cyber-violet.png"
+            ;;
+        light|lilac)
+            file="$BG_DIR/filzaos-light.png"
+            ;;
+        neon|cyberpunk)
+            file="$BG_DIR/filzaos-neon.png"
+            ;;
+        classic)
+            file="$BG_DIR/filzaos-classic.png"
+            ;;
+        random)
+            local files=("$BG_DIR"/*.png)
+            if [[ ${#files[@]} -gt 0 ]]; then
+                file="${files[RANDOM % ${#files[@]}]}"
+            fi
+            ;;
+        *)
+            if [[ -f "$BG_DIR/$target" ]]; then
+                file="$BG_DIR/$target"
+            elif [[ -f "$BG_DIR/filzaos-$target.png" ]]; then
+                file="$BG_DIR/filzaos-$target.png"
+            else
+                echo "Error: Unknown wallpaper '$target'."
+                list_wallpapers
+                exit 1
+            fi
+            ;;
+    esac
+
+    if [[ ! -f "$file" ]]; then
+        # Fallback to main wallpaper
+        file="$BG_DIR/filzaos.png"
+    fi
+
+    local uri="file://$file"
+
+    gsettings set org.gnome.desktop.background picture-uri "$uri" 2>/dev/null || true
+    gsettings set org.gnome.desktop.background picture-uri-dark "$uri" 2>/dev/null || true
+    gsettings set org.gnome.desktop.background picture-options "zoom" 2>/dev/null || true
+
+    # Save to user state file for persistence
+    mkdir -p "$HOME/.config/filzaos"
+    echo "$file" > "$HOME/.config/filzaos/current-wallpaper"
+
+    echo -e "[${GREEN}✓${RESET}] Wallpaper set to: ${PURPLE}$(basename "$file")${RESET}"
+}
+
+case "$CMD" in
+    list|--list|-l)
+        list_wallpapers
+        ;;
+    *)
+        set_wallpaper "$CMD"
+        ;;
+esac

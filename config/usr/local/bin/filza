@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+# ============================================================
+# FILZAOS MASTER COMMAND CENTER
+# ============================================================
+
+PURPLE='\033[38;5;141m'
+LAVENDER='\033[38;5;183m'
+VIOLET='\033[38;5;93m'
+BRIGHT='\033[38;5;219m'
+DIM='\033[38;5;240m'
+RESET='\033[0m'
+BOLD='\033[1m'
+
+clear 2>/dev/null || true
+
+echo -e "${PURPLE}${BOLD}"
+cat << 'ASCII'
+███████╗██╗██╗     ███████╗ █████╗  ██████╗ ███████╗
+██╔════╝██║██║     ╚════██║██╔══██╗██╔════╝ ██╔════╝
+█████╗  ██║██║         ██╔╝███████║██║  ███╗█████╗  
+██╔══╝  ██║██║        ██╔╝ ██╔══██║██║   ██║██╔══╝  
+██║     ██║███████╗  ██╔╝  ██║  ██║╚██████╔╝███████╗
+╚═╝     ╚═╝╚══════╝  ╚═╝   ╚═╝  ╚═╝ ╚═════╝ ╚══════╝
+ASCII
+echo -e "${RESET}"
+
+echo -e "                ${BRIGHT}${BOLD}FILZAOS${RESET}"
+echo -e "              ${LAVENDER}Linux Remix${RESET}"
+echo -e "                 ${VIOLET}Noble${RESET}"
+echo
+
+# Gather system specs
+KERNEL=$(uname -r)
+ARCH=$(uname -m)
+HOST=$(hostname)
+USER_NAME=${USER:-$(whoami)}
+SHELL_NAME=$(basename "${SHELL:-bash}")
+DESKTOP="GNOME 46"
+
+# CPU
+CPU=$(grep -m1 'model name' /proc/cpuinfo 2>/dev/null | cut -d: -f2 | sed 's/^[ \t]*//' || echo "Unknown CPU")
+CPU_CORES=$(nproc 2>/dev/null || echo "1")
+
+# Memory
+MEM_TOTAL=$(free -h 2>/dev/null | awk '/^Mem:/ {print $2}')
+MEM_USED=$(free -h 2>/dev/null | awk '/^Mem:/ {print $3}')
+
+# Disk
+DISK_TOTAL=$(df -h / 2>/dev/null | awk 'NR==2 {print $2}')
+DISK_USED=$(df -h / 2>/dev/null | awk 'NR==2 {print $3}')
+DISK_PERCENT=$(df -h / 2>/dev/null | awk 'NR==2 {print $5}')
+
+# Uptime
+UPTIME=$(uptime -p 2>/dev/null | sed 's/^up //' || uptime | awk '{print $3}')
+
+echo -e "${VIOLET}┌────────────────────────────────────────────────────────┐${RESET}"
+echo -e "${VIOLET}│${RESET}  ${PURPLE}${BOLD}System Information${RESET}                                   ${VIOLET}│${RESET}"
+echo -e "${VIOLET}├────────────────────────────────────────────────────────┤${RESET}"
+printf "${VIOLET}│${RESET}  ${LAVENDER}%-15s${RESET} : ${BRIGHT}%-34s${RESET} ${VIOLET}│${RESET}\n" "OS" "FilzaOS Linux Remix (Noble)"
+printf "${VIOLET}│${RESET}  ${LAVENDER}%-15s${RESET} : %-34s ${VIOLET}│${RESET}\n" "Version" "1.0.9"
+printf "${VIOLET}│${RESET}  ${LAVENDER}%-15s${RESET} : %-34s ${VIOLET}│${RESET}\n" "Base" "Ubuntu 24.04.5 LTS Noble"
+printf "${VIOLET}│${RESET}  ${LAVENDER}%-15s${RESET} : %-34s ${VIOLET}│${RESET}\n" "Kernel" "$KERNEL"
+printf "${VIOLET}│${RESET}  ${LAVENDER}%-15s${RESET} : %-34s ${VIOLET}│${RESET}\n" "Architecture" "$ARCH"
+printf "${VIOLET}│${RESET}  ${LAVENDER}%-15s${RESET} : %-34s ${VIOLET}│${RESET}\n" "Hostname" "$HOST"
+printf "${VIOLET}│${RESET}  ${LAVENDER}%-15s${RESET} : %-34s ${VIOLET}│${RESET}\n" "User" "$USER_NAME"
+printf "${VIOLET}│${RESET}  ${LAVENDER}%-15s${RESET} : %-34s ${VIOLET}│${RESET}\n" "Desktop" "$DESKTOP"
+printf "${VIOLET}│${RESET}  ${LAVENDER}%-15s${RESET} : %-34s ${VIOLET}│${RESET}\n" "Shell" "$SHELL_NAME"
+printf "${VIOLET}│${RESET}  ${LAVENDER}%-15s${RESET} : %-34s ${VIOLET}│${RESET}\n" "Uptime" "$UPTIME"
+echo -e "${VIOLET}├────────────────────────────────────────────────────────┤${RESET}"
+printf "${VIOLET}│${RESET}  ${LAVENDER}%-15s${RESET} : %-34s ${VIOLET}│${RESET}\n" "CPU" "${CPU:0,34}"
+printf "${VIOLET}│${RESET}  ${LAVENDER}%-15s${RESET} : %-34s ${VIOLET}│${RESET}\n" "CPU Cores" "$CPU_CORES"
+printf "${VIOLET}│${RESET}  ${LAVENDER}%-15s${RESET} : %-34s ${VIOLET}│${RESET}\n" "RAM" "$MEM_USED / $MEM_TOTAL"
+printf "${VIOLET}│${RESET}  ${LAVENDER}%-15s${RESET} : %-34s ${VIOLET}│${RESET}\n" "Root Disk" "$DISK_USED / $DISK_TOTAL ($DISK_PERCENT)"
+echo -e "${VIOLET}└────────────────────────────────────────────────────────┘${RESET}"
+echo
+echo -e "Type ${PURPLE}${BOLD}filza-help${RESET} for available commands, themes, and tools."
+echo
