@@ -1,86 +1,91 @@
-# FilzaOS
-
-FilzaOS is a custom Linux distribution remix engineered on top of Ubuntu 24.04.5 LTS (Noble Numbat).
-
-The project blends an aesthetic purple-accented desktop experience with custom CLI system utilities, native diagnostic tools, an integrated wallpaper & theme engine, and a hardened live-boot environment.
-
----
-
-## What's New in FilzaOS v1.0.9
-
-- **FilzaOS Boot Branding:** Integrated Plymouth text & splash boot identity displaying `FILZAOS` with custom purple color grading instead of default Ubuntu branding.
-- **Custom Purple Icon Suite:** Full Freedesktop icon theme featuring purple folders, custom `inode-directory` MIME associations, specialized XDG user directory emblems (Home, Documents, Downloads, Music, Pictures, Videos, Public, Templates, Open, Remote, Recent), and scalable 16x16 symbolic sidebar icons.
-- **Wallpaper Library & Engine (`filza-wallpaper`):** 
-  - Six curated wallpapers installed into `/usr/share/backgrounds/filzaos/`:
-    - `purple`: Signature FilzaOS Purple (Default)
-    - `midnight`: Deep-space ultra-dark minimalist mode
-    - `cyber-violet`: Sci-fi orbital space landscape
-    - `light`: Futuristic lilac high-key clean landscape
-    - `neon`: Cyberpunk cityscape purple-cyan landscape
-    - `classic`: Original FilzaOS heritage wallpaper
-  - Switch wallpapers on the fly via `filza-wallpaper <name>` or `filza-wallpaper random`.
-- **Integrated Theme Switcher (`filza-theme`):** Instant system theme switching (`purple`, `midnight`, `cyber-violet`, `light`, `neon`, `classic`) controlling wallpaper, GTK theme, icon theme, GNOME color-scheme, and terminal color palette with reboot persistence.
-- **FilzaOS Command Suite:**
-  - `filza`: Master system command center with ASCII art identity.
-  - `filza-info`: Complete hardware & distribution summary.
-  - `filza-sys`: Real-time system diagnostics (`info`, `cpu`, `memory`, `disk`, `processes`, `services`).
-  - `filza-net`: Network diagnostic utility (`info`, `ip`, `ping`, `route`, `ports`).
-  - `filza-doctor`: 14-point automated distribution health & integrity verification.
-  - `filza-fetch`: Lightweight ASCII system information display.
-  - `filza-help`: Complete documentation and unique feature reference.
-  - `portscan`: Built-in TCP socket scanner (`portscan <target>` / `portscan --common <target>`).
-  - `jan`: Custom developer easter egg animation.
-- **Terminal Styling:** Custom deep purple terminal palette (`#0B0614` background, `#E9D5FF` text, `#C084FC` cursor) with two-line `┌──[filzaos@filzaos]─[~] └─$` prompt.
-- **Cleaned Desktop Environment:** Ubuntu installer shortcuts and bootstrap launchers completely removed from the desktop, dock, and application drawer.
-- **Bootloader Integrity:** Preserved original Ubuntu 24.04 kernel infrastructure, untouched initrd, BIOS & UEFI dual-boot support, and GRUB menu customization.
-
----
-
-## Base Architecture
-
-- **Base:** Ubuntu 24.04.5 LTS
-- **Codename:** Noble
-- **Architecture:** amd64
-- **Desktop Environment:** GNOME 46
-- **Windowing:** Wayland & X11 compatible
-- **Init System:** systemd
-
----
-
-## Project Structure
-
+FilzaOS
+FilzaOS v1.0.9 — Initial Public Release
+FilzaOS is an experimental Ubuntu-based Linux distribution remix built on Ubuntu 24.04.5 LTS (Noble Numbat). It gives the live desktop a distinct FilzaOS identity through custom boot branding, a purple-accented GNOME desktop, wallpapers and theme switching, terminal styling, and FilzaOS command-line utilities.
+> **Project stage:** v1.0.9 is an early **Foundation + Identity** release. It is a customized Ubuntu-based remix, not an operating system built from scratch. More FilzaOS-specific commands and utilities are planned for future releases.
+Download FilzaOS v1.0.9
+Download FilzaOS-v1.0.9.iso from SourceForge
+Base: Ubuntu 24.04.5 LTS (Noble Numbat)
+Architecture: amd64 (64-bit x86)
+Image size: approximately 6.1 GB
+Boot: hybrid BIOS and UEFI image
+Recommended first run: a virtual machine such as VMware
+Verify the download (optional but recommended)
+Published SHA-256 checksum:
 ```text
-Filza-OS/
-├── config/
-│   ├── etc/
-│   │   ├── bash.bashrc.d/
-│   │   ├── filzaos-release
-│   │   ├── gtk-3.0/
-│   │   ├── gtk-4.0/
-│   │   ├── profile.d/
-│   │   └── xdg/autostart/
-│   └── usr/
-│       ├── local/bin/          # FilzaOS command tools
-│       └── share/
-│           ├── backgrounds/    # FilzaOS wallpaper collection
-│           ├── icons/FilzaOS/  # Purple icon theme & SVGs
-│           ├── plymouth/       # Boot splash & text branding
-│           └── themes/FilzaOS/ # GTK 3 & 4 styling
-├── scripts/
-│   └── build-filzaos-v1.0.9.sh # Native WSL reproducible build script
-├── source/
-│   └── ubuntu.iso              # Base original Ubuntu Noble ISO
-├── build/
-│   └── FilzaOS-v1.0.9.iso      # Output bootable hybrid ISO
-└── README.md
+809dc6de3ccae84a099c01d4bd45fc00330875dd30081ae0b5aea87b8fcceb47  FilzaOS-v1.0.9.iso
 ```
-
----
-
-## Building FilzaOS
-
-Builds are executed inside WSL using native Linux workspace storage:
-
+On Windows, open PowerShell in the ISO's folder:
+```powershell
+Get-FileHash .\FilzaOS-v1.0.9.iso -Algorithm SHA256
+```
+On Linux:
+```bash
+sha256sum FilzaOS-v1.0.9.iso
+```
+Compare the calculated hash with the published value. `SHA256SUMS` is a text file for verification, not something users install. A matching checksum verifies that the file matches the published hash; it does not by itself prove that software is safe.
+What's included in v1.0.9
+FilzaOS boot identity: custom GRUB menu text, Plymouth text branding, and boot graphics.
+Purple icon theme: custom folder/directory icons, user-directory icons, and symbolic sidebar icons.
+Wallpaper collection: `purple`, `midnight`, `cyber-violet`, `light`, `neon`, and `classic`.
+Wallpaper switching: `filza-wallpaper <name>` or `filza-wallpaper random`.
+Theme switching: `filza-theme` coordinates wallpaper, GTK styling, icon theme, GNOME color preference, and terminal colors.
+Terminal styling: deep-purple terminal palette and FilzaOS shell prompt.
+Command suite:
+`filza` — command center and system summary
+`filza-info` — system/distribution information
+`filza-sys` — CPU, memory, disk, process, and service diagnostics
+`filza-net` — network information and diagnostics
+`filza-doctor` — automated distribution health checks
+`filza-fetch` — compact system information
+`filza-help` — command reference
+`portscan` — TCP port scanning utility
+`jan` — developer easter egg
+Desktop cleanup: Ubuntu installer shortcuts and related launcher components removed from this live image.
+Preserved foundations: Ubuntu kernel/initrd infrastructure, systemd, GNOME, package metadata, and BIOS/UEFI boot structure.
+Quick start
+Download the ISO.
+(Recommended) Verify its SHA-256 checksum.
+Create a virtual machine in VMware Workstation or another compatible virtualization product.
+Attach `FilzaOS-v1.0.9.iso` as the virtual optical disc and boot it.
+Choose Try FilzaOS in the boot menu.
+Important: The Ubuntu installer has been removed from v1.0.9. This release is intended for live-session experimentation and VM testing; it does not provide a normal installer for installing FilzaOS onto a physical disk. Do not overwrite or repartition a disk expecting an installer to be available.
+See Installation and testing.
+Project status and roadmap
+This first public release establishes FilzaOS's identity and customization foundation. It is intentionally an early release; the roadmap will evolve with the project.
+[ ] Add more FilzaOS-native commands and system utilities
+[ ] Expand networking and diagnostics
+[ ] Add automation and developer tools
+[ ] Improve hardware/system reporting
+[ ] Expand desktop customization and accessibility
+[ ] Improve build automation and documentation
+[ ] Evaluate installer options for a future release
+Roadmap items are plans, not features included in v1.0.9.
+Building from source
+The v1.0.9 build script is designed for Ubuntu under WSL on Windows, using the project layout at `/mnt/d/FilzaOS`. Place a compatible original Ubuntu 24.04.5 LTS amd64 ISO at `/mnt/d/FilzaOS/source/ubuntu.iso`, install dependencies listed in Building FilzaOS, then run:
 ```bash
 bash /mnt/d/FilzaOS/scripts/build-filzaos-v1.0.9.sh
 ```
+The script keeps extracted root filesystems in native WSL Linux storage. Do not move its root filesystem workspace to `/mnt/d`. Review the build guide before running it. The script is version-specific, not a general-purpose distribution builder.
+Repository structure
+```text
+Filza-OS/
+├── config/                       # FilzaOS configuration and assets
+├── scripts/
+│   └── build-filzaos-v1.0.9.sh   # v1.0.9 ISO build workflow
+├── docs/
+│   ├── INSTALLATION.md
+│   └── BUILDING.md
+└── README.md
+```
+The original Ubuntu ISO and generated build artifacts are not stored in this Git repository.
+Troubleshooting
+Black screen: try the FilzaOS (safe graphics) GRUB entry if available.
+Download seems incomplete: compare its SHA-256 hash with the published value and download again if it differs.
+Command not found: open a terminal and check the command spelling with `filza-help`.
+Missing source ISO during build: check `/mnt/d/FilzaOS/source/ubuntu.iso`.
+For reproducible problems, open a GitHub issue and include the VM software, host OS, boot entry, and relevant error output. Never include passwords or tokens.
+Important notes
+FilzaOS v1.0.9 is experimental and is not represented as production-ready or security-hardened.
+Test in a virtual machine first. Back up important data before experimenting with OS images.
+FilzaOS is an independent community project, not an official Ubuntu flavor or Canonical product.
+Ubuntu and third-party components retain their respective trademarks, copyrights, and licenses.
